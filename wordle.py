@@ -5,16 +5,29 @@ import art
 MAX_TURNS = 5
 
 def main():
-    """Creates word and makes game repeatable"""
+    """Chooses word and makes game repeatable"""
+    choice = "1"
 
-    play = True
-    while play:
-        
-        answer = get_starting_word()
-        repeat = play_wordle(answer)
-        
-        if repeat.lower() != "y":
-            play = False
+    while choice in ["1", "2", "3"]:
+        choice = show_main_menu()
+        if choice == "1":
+            play_wordle()
+        elif choice == "2":
+            add_word_to_wordlist()
+        elif choice == "3":
+            remove_word_from_list()
+        else:
+            choice = "Stop"
+
+def show_main_menu() -> str:
+    print(art.logo)
+    print("Welcome to Wordle")
+    print("1. Play Wordle")
+    print("2. Add word to wordlist")
+    print("3. Remove word from wordlist")
+    print("Pres any other button to quit")
+    choice = input("(1 / 2 / 3): ")
+    return choice
 
 def get_starting_word() -> str:
     """ Gets a random word from the word list """
@@ -26,22 +39,29 @@ def get_starting_word() -> str:
 
     return ret_word.lower()
 
-def play_wordle(answer):
+def play_wordle() -> str:
     """ Main game loop """
 
-    print(art.logo)
-    for i in range(1, MAX_TURNS+1):
-        guess = get_guess(i)
-        process_guess(guess, answer)
-        print()
-    
-    if guess.lower() != answer:
-        print(art.lost)
-        print(f"You lost. The Answer was: {answer}")
+    play = True
+    while play:
+        print(art.logo)
+        answer = get_starting_word()
 
-    print("Play Again? (Y / N)")
-    repeat = input()
-    return repeat
+        for i in range(1, MAX_TURNS+1):
+            guess = get_guess(i)
+            if process_guess(guess, answer):
+                print()
+            else:
+                break
+        
+        if guess.lower() != answer:
+            print(art.lost)
+            print(f"You lost. The Answer was: {answer}")
+
+        print("Play Again? (Y / N)")
+        repeat = input()
+        if repeat.lower() != "y":
+            play = False
 
 def get_guess(current_turn) -> str:
     """Gets a guess from the player and checks it"""
@@ -53,8 +73,10 @@ def get_guess(current_turn) -> str:
         print("Enter Guess:")
         unsafe_guess = input()
 
-        if len(unsafe_guess.strip().strip(string.punctuation)) == 5:
-            guess = unsafe_guess
+        if len(unsafe_guess.strip().strip(string.punctuation)) == 5 and not unsafe_guess.isnumeric():
+            guess = unsafe_guess.lower()
+        elif unsafe_guess.isnumeric():
+            print("Guess cannot be a number. Try again.\n")
         else:
             print("Guess has to be 5 letters long. Try again.\n")
     
@@ -66,6 +88,7 @@ def process_guess(guess, answer):
     if guess.lower() == answer:
         print(art.celebration)
         print(f"The answer is {answer}")
+        return False
 
     else:
         show_string = ["-"]*5
@@ -76,7 +99,14 @@ def process_guess(guess, answer):
             elif guess[i] in answer:
                 show_string[i] = "c"
 
-    print("".join(show_string))
+        print("".join(show_string))
+        return True
+
+def add_word_to_wordlist():
+    pass
+
+def remove_word_from_list():
+    pass
 
 if __name__ == "__main__":
     main()
