@@ -1,0 +1,4 @@
+omar3: 0
+kristjan: 2
+gardar: 1
+tryggvi: 4

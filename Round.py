@@ -108,5 +108,5 @@ class Round():
         
         with open(file, "r+") as scoreboard:
             data = scoreboard.read().splitlines()
-            scoreboard.write(f"\n{nickname}, {self.score}")
+            scoreboard.write(f"\n{nickname}: {self.score}")
         print(f"{nickname}, You're on the board!\n")

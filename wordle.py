@@ -2,6 +2,7 @@ import random
 import art
 import string
 import os
+import math
 from Round import Round
 
 def main():
@@ -9,7 +10,7 @@ def main():
 
     choice = "1"
     title = "Welcome to Wordle!"
-    while choice in ["1", "2", "3"]:
+    while choice in ["1", "2", "3", "4"]:
         choice = show_main_menu(title)
 
         if choice == "1":
@@ -24,6 +25,9 @@ def main():
         elif choice == "3":
             title = remove_word_from_list()
 
+        elif choice == "4":
+            see_high_scores()
+
         else:
             choice = "Stop"
 
@@ -36,8 +40,9 @@ def show_main_menu(title) -> str:
     print("1. Play Wordle")
     print("2. Add word to wordlist")
     print("3. Remove word from wordlist")
+    print("4. See high scores")
     print("Press any other button to quit")
-    choice = input("(1 / 2 / 3): ")
+    choice = input("(1 / 2 / 3 / 4): ")
     return choice
 
 def play_wordle_round() -> bool:
@@ -118,6 +123,9 @@ def add_word_to_wordlist():
             elif any([letter.isnumeric() for letter in unsafe_new_word]):
                 print("Letter cannot include letters")
 
+            elif " " in unsafe_new_word:
+                print("Word cannot include spaces")
+
             # The last thing we check on to hopefully save some time
             elif unsafe_new_word in words:
                 print("Word already in wordlist")
@@ -188,6 +196,66 @@ def show_adding_removing_UI(word):
     file_name = f"Wordlists/{word_length}_letter_words.txt"
 
     return word_length, file_name
+
+def see_high_scores():
+    """Show high scores"""
+
+    # UI
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print(art.high_scores)
+    print("Choose scoreboard")
+    print("1. Normal Mode")
+    print("2. Rule of 7")
+    print("3. Squadrant")
+    print("(1 / 2 / 3):")
+    choice = input()
+
+    # Open the correct folder based on user input
+    file_name, title = None, None
+    if choice == "1":
+        file_name = "high_scores/5wordle_scores.txt"
+        title = "NORMAL MODE"
+
+    elif choice == "2":
+        file_name = "high_scores/rule_of_7_scores.txt"
+        title = "RULE OF 7"
+
+    elif choice == "3":
+        file_name = "high_scores/squadrant_scores.txt"
+        title = "SQUADRANT MODE"
+
+    # Show highscores if user input is valid
+    if file_name and title:
+
+        with open(file_name) as word_data:
+            scoreboard = word_data.read().splitlines()
+        number_of_lines = len(scoreboard)
+
+        # clear screen and show UI
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print(art.high_scores)
+        print(" -- " + title + " -- ")
+
+        # Check there is any data in the file
+        if number_of_lines == 0:
+            print("No data available for this game mode")
+
+        else:
+            # base the number of spaces on the longest word in the file
+            longest_word_length = max([len(word) for word in scoreboard])
+
+            for i in range(number_of_lines):
+                # find correct number of spaces
+                number_of_spaces = (2 * longest_word_length - len(scoreboard[i])) // 2
+                spaces = " " * number_of_spaces
+
+                # Words of odd length need one more space
+                if len(scoreboard[i]) % 2 == 0:
+                    print("|" + spaces + scoreboard[i] + spaces + "|")
+                else:
+                    print("|" + spaces + scoreboard[i] + spaces + " |")
+
+            input("\nPress enter to quit\n")
 
 if __name__ == "__main__":
     main()
