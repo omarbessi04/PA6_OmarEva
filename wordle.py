@@ -2,7 +2,6 @@ import random
 import art
 import string
 import os
-import math
 from Round import Round
 
 def main():
@@ -10,7 +9,7 @@ def main():
 
     choice = "1"
     title = "Welcome to Wordle!"
-    while choice in ["1", "2", "3", "4"]:
+    while choice in ["1", "2", "3", "4", "5"]:
         choice = show_main_menu(title)
 
         if choice == "1":
@@ -27,6 +26,9 @@ def main():
 
         elif choice == "4":
             see_high_scores()
+        
+        elif choice == "5":
+            pass
 
         else:
             choice = "Stop"
@@ -41,8 +43,9 @@ def show_main_menu(title) -> str:
     print("2. Add word to wordlist")
     print("3. Remove word from wordlist")
     print("4. See high scores")
+    print("5. See profiles")
     print("Press any other button to quit")
-    choice = input("(1 / 2 / 3 / 4): ")
+    choice = input("(1 / 2 / 3 / 4 / 5): ")
     return choice
 
 def play_wordle_round() -> bool:
