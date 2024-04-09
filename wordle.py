@@ -1,27 +1,36 @@
 import random
-import string
 import art
-
-MAX_TURNS = 5
+import string
+from Round import Round
 
 def main():
-    """Chooses word and makes game repeatable"""
-    choice = "1"
+    """Starts Main Menu"""
 
+    choice = "1"
+    title = "Welcome to Wordle!"
     while choice in ["1", "2", "3"]:
-        choice = show_main_menu()
+        choice = show_main_menu(title)
+
         if choice == "1":
-            play_wordle()
+            title = "Welcome to Wordle!"
+            game = play_wordle_round()
+            while game:
+                game = play_wordle_round()
+
         elif choice == "2":
-            add_word_to_wordlist()
+            title = add_word_to_wordlist()
+
         elif choice == "3":
-            remove_word_from_list()
+            title = remove_word_from_list()
+
         else:
             choice = "Stop"
 
-def show_main_menu() -> str:
+def show_main_menu(title) -> str:
+    """Shows the main menu with an optional title"""
+
     print(art.logo)
-    print("Welcome to Wordle")
+    print(title)
     print("1. Play Wordle")
     print("2. Add word to wordlist")
     print("3. Remove word from wordlist")
@@ -29,81 +38,88 @@ def show_main_menu() -> str:
     choice = input("(1 / 2 / 3): ")
     return choice
 
-def get_starting_word() -> str:
+def play_wordle_round() -> bool:
+    """Plays a repeatable round of Wordle"""
+
+    settings = game_mode()
+    word = get_starting_word(settings["Wordlength"])
+
+    new_round = Round(word, settings["Wordlength"], settings["Max Guesses"])
+    new_round.play_round()
+
+    print("Play Again? (Y / N)")
+    repeat = input()
+    if repeat.lower() == "y":
+        return True
+
+def game_mode():
+    """Edits the settigns of the game"""
+
+    settings ={"Wordlength": 5, "Max Guesses": 5}
+
+    print(art.game_mode)
+    print("Pick Game Mode:")
+    print("1. Normal\n\t5 letter word, 5 guesses\n")
+    print("2. Squadrant\n\t4 letter word, 6 guesses\n")
+    print("3. Rule of 7\n\t7 letter word, 7 guesses\n")
+    print("\nIgnore to play Normal mode")
+    mode = input("(1 / 2 / 3):\n")
+
+    if mode == "2":
+        settings ={"Wordlength": 4, "Max Guesses": 6}
+
+    if mode == "3":
+        settings ={"Wordlength": 7, "Max Guesses": 7}
+
+    return settings
+
+def get_starting_word(wordlength) -> str:
     """ Gets a random word from the word list """
 
-    with open ("wordlist.txt", "r") as word_list:
+    file_name = f"Wordlists/{wordlength}_letter_words.txt"
+    with open (file_name, "r") as word_list:
         words = word_list.read().splitlines()
+        ret_word = ""
         word_index = random.randint(0, len(words)-1)
         ret_word = words[word_index]
 
     return ret_word.lower()
 
-def play_wordle() -> str:
-    """ Main game loop """
-
-    play = True
-    while play:
-        print(art.logo)
-        answer = get_starting_word()
-
-        for i in range(1, MAX_TURNS+1):
-            guess = get_guess(i)
-            if process_guess(guess, answer):
-                print()
-            else:
-                break
-        
-        if guess.lower() != answer:
-            print(art.lost)
-            print(f"You lost. The Answer was: {answer}")
-
-        print("Play Again? (Y / N)")
-        repeat = input()
-        if repeat.lower() != "y":
-            play = False
-
-def get_guess(current_turn) -> str:
-    """Gets a guess from the player and checks it"""
-
-    guess = ""
-    
-    while guess == "":
-        print(f"{current_turn} / {MAX_TURNS}")
-        print("Enter Guess:")
-        unsafe_guess = input()
-
-        if len(unsafe_guess.strip().strip(string.punctuation)) == 5 and not unsafe_guess.isnumeric():
-            guess = unsafe_guess.lower()
-        elif unsafe_guess.isnumeric():
-            print("Guess cannot be a number. Try again.\n")
-        else:
-            print("Guess has to be 5 letters long. Try again.\n")
-    
-    return guess
-
-def process_guess(guess, answer):
-    """Analyzes the guess from the player and shows status"""
-
-    if guess.lower() == answer:
-        print(art.celebration)
-        print(f"The answer is {answer}")
-        return False
-
-    else:
-        show_string = ["-"]*5
-
-        for i in range(5):
-            if guess[i] == answer[i]:
-                show_string[i] = "C"
-            elif guess[i] in answer:
-                show_string[i] = "c"
-
-        print("".join(show_string))
-        return True
-
 def add_word_to_wordlist():
-    pass
+    print(art.settings)
+    print("First enter the length of the word to be added")
+    print("(Must be 4, 5, or 7)")
+
+    word_length = 0
+    while word_length not in ["4", "5", "7"]:
+        unsafe_word_length = input()
+        if unsafe_word_length not in ["4", "5", "7"]:
+            print("Word length must be 4, 5, or 7. Try Again")
+        else:
+            word_length = unsafe_word_length
+
+    word_length = int(unsafe_word_length)
+    file_name = f"Wordlists/{word_length}_letter_words.txt"
+
+    with open (file_name, "r+") as word_list:
+        words = word_list.read().splitlines()
+
+        new_word = ""
+        while new_word == "":
+            print("Enter new word:")
+            unsafe_new_word = input().strip().strip(string.punctuation)
+            if len(unsafe_new_word) != word_length:
+                print(f"Word must be {word_length} letters long")
+            elif unsafe_new_word in words:
+                print("Word already in wordlist")
+            elif any([letter.isnumeric() for letter in unsafe_new_word]):
+                print("Letter cannot include letters")
+            else:
+                new_word = unsafe_new_word
+        
+        word_list.write("\n"+new_word)
+    
+    return f"{new_word} added to wordlist!"
 
 def remove_word_from_list():
     pass
