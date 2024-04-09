@@ -6,12 +6,12 @@ earl
 fend
 gush
 hymn
-ibis
 jolt
 kite
 lush
 mink
 numb
+tear
 opal
 pave
 raze
@@ -62,6 +62,7 @@ nuke
 owls
 pews
 rump
+tomb
 sack
 tofu
 veto
