@@ -1,5 +1,6 @@
 import string
 import art
+import os
 
 class Round():
     """A round of Wordle"""
@@ -8,6 +9,7 @@ class Round():
         self.answer = answer
         self.wordlength = wordlength
         self.max_guesses = max_guesses
+        self.guesses = []
 
     def play_round(self) -> str:
         """ Main game loop """
@@ -20,7 +22,7 @@ class Round():
             else:
                 break
         
-        if guess.lower() != self.answer:
+        if guess != self.answer:
             print(art.lost)
             print(f"You lost. The Answer was: {self.answer}")
 
@@ -46,9 +48,9 @@ class Round():
     def process_guess(self, guess):
         """Analyzes the guess from the player and shows status"""
 
-        if guess.lower() == self.answer:
+        if guess == self.answer:
             print(art.celebration)
-            print(f"The self.answer is {self.answer}")
+            print(f"The answer is {self.answer}")
             return False
 
         else:
@@ -61,4 +63,11 @@ class Round():
                     show_string[i] = "c"
 
             print("".join(show_string))
+            self.guesses.append([guess, "".join(show_string)])
+
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print("Previous Guesses")
+            print("-----------------")
+            [print(f"{guess[0]}\t{guess[1]}") for guess in self.guesses]
+
             return True
