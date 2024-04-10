@@ -4,9 +4,11 @@ class Profile:
         self.wordle_score = wordle
         self.ro7_score = ro7
         self.squad_score = squad
+        self.total_wins = 0
+        self.total_losses = 0
 
     def __str__(self):
-        ret_string = f"{self.name} {" " * (10-len(self.name))} \t\t {self.wordle_score} \t\t {self.ro7_score} \t\t {self.squad_score}"
+        ret_string = f"{self.name} {" " * (10-len(self.name))} \t\t {self.wordle_score} \t\t {self.ro7_score} \t\t {self.squad_score} \t\t {self.total_wins} \t\t {self.total_losses}"
         return ret_string
 
 class Profile_Manager:
@@ -36,6 +38,11 @@ class Profile_Manager:
                     elif i == 2:
                         if find_profile.squad_score < line[1]:
                             find_profile.squad_score = line[1]
+                    
+                    if line[1] != 0:
+                        find_profile.total_wins += 1
+                    else:
+                        find_profile.total_losses += 1
 
                 else:
                     new_profile = Profile(name = line[0])
@@ -45,6 +52,11 @@ class Profile_Manager:
                         new_profile.ro7_score = line[1]
                     elif i == 2:
                         new_profile.squad_score = line[1]
+
+                    if line[1] != 0:
+                        new_profile.total_wins += 1
+                    else:
+                        new_profile.total_losses += 1
 
                     self.profiles.append(new_profile)
 
@@ -61,8 +73,8 @@ class Profile_Manager:
     def print_profiles(self):
         if self.profiles:
             self.sort_profiles()
-            print("NAME \t\t\t WORDLE \t RULE OF 7 \t SQUADRANT")
-            print("-"*68)
+            print("NAME \t\t\t WORDLE \t RULE OF 7 \t SQUADRANT \t TOTAL WINS \t TOTAL LOSSES")
+            print("-"*103)
             [print(prof) for prof in self.profiles]
         else:
             print("No profiles exist yet.")

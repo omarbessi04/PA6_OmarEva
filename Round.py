@@ -97,14 +97,25 @@ class Round():
                   "Coward.", 
                   "Come oooonnnnn.", 
                   "You're not getting out of this", 
-                  "Where's your funny bone?", 
-                  "Don't be so boooooriinng."]
+                  "Where's your funny bone?"]
+        
         nickname = ""
 
         while nickname == "":
-            nickname = input()
-            if nickname == "":
-                print(random.choice(teases) + " Try Again.")
+            unsafe_nickname = input().strip().strip(string.punctuation)
+            symbols = "!@#$%^&*()-+?_=,<>/;:"
+
+            if unsafe_nickname == "":
+                print(random.choice(teases) + " Try Again.\n")
+
+            elif unsafe_nickname.isnumeric():
+                print("Name cannot be a number. Try Again.\n")
+            
+            elif any(char in symbols for char in unsafe_nickname):
+                print("Name cannot include special symbols. Try Again\n")
+
+            else:
+                nickname = unsafe_nickname
 
 
         file = "high_scores/"

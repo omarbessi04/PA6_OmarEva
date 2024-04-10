@@ -218,20 +218,21 @@ def add_word_to_wordlist(word_length, file_name):
         new_word = ""
         while new_word == "":
             print("Enter new word:")
-            unsafe_new_word = input().strip().strip(string.punctuation)
+            unsafe_new_word = input()
+            unsafe_new_word = unsafe_new_word.strip().strip(string.punctuation)
 
             if len(unsafe_new_word) != word_length:
-                print(f"Word must be {word_length} letters long")
+                print(f"Word must be {word_length} letters long\n")
 
             elif any([letter.isnumeric() for letter in unsafe_new_word]):
-                print("Letter cannot include letters")
+                print("Letter cannot include letters\n")
 
             elif " " in unsafe_new_word:
-                print("Word cannot include spaces")
+                print("Word cannot include spaces\n")
 
             # The last thing we check on to hopefully save some time
             elif unsafe_new_word in words:
-                print("Word already in wordlist")
+                print("Word already in wordlist\n")
 
             else:
                 new_word = unsafe_new_word
