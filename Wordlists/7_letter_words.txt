@@ -79,4 +79,6 @@ twinkle
 upright
 whisker
 acrobat
-furiousfurrous
+furious
+furrous
+amplify

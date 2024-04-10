@@ -1,6 +1,4 @@
-omar3: 0
-kristjan: 2
-gardar: 1
-tryggvi: 4
-OMAR: 1
-OMAR: 4
+omar: 0
+eva: 1
+fartmeister: 0
+& C:/Python312/python.exe "c:/Users/Ómar Bessi Ómarsson/HR/Önn 2/Gagnaskipan/PA6_OmarEva/wordle.py": 0

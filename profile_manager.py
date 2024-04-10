@@ -59,7 +59,10 @@ class Profile_Manager:
         self.profiles = sorted_list
 
     def print_profiles(self):
-        self.sort_profiles()
-        print("NAME \t\t\t WORDLE \t RULE OF 7 \t SQUADRANT")
-        print("-"*68)
-        [print(prof) for prof in self.profiles]
+        if self.profiles:
+            self.sort_profiles()
+            print("NAME \t\t\t WORDLE \t RULE OF 7 \t SQUADRANT")
+            print("-"*68)
+            [print(prof) for prof in self.profiles]
+        else:
+            print("No profiles exist yet.")

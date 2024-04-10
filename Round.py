@@ -24,8 +24,8 @@ class Round():
                 print(art.logo)
                 print("Previous Guesses")
                 print("-----------------")
-                [print(f"{guess[0]}\t{guess[1]}") for guess in self.guesses]
-                print()
+                self.print_previous_guesses()
+
             else:
                 break
         
@@ -72,14 +72,24 @@ class Round():
                 elif guess[i] in self.answer:
                     show_string[i] = "c"
 
-            print("".join(show_string))
             self.guesses.append([guess, "".join(show_string)])
 
             return True
     
+    def print_previous_guesses(self):
+        top_line = "| "
+        bottom_line = "| "
+        for guess in self.guesses:
+            top_line += guess[0] + " | "
+            bottom_line += guess[1] + " | "
+
+        print(top_line)
+        print(bottom_line)
+        print()
+        
     def store_score(self):
         print()
-        print("Enter nickname for scoreboard:")
+        print("Enter nickname:")
         print("(NO NAUGHTY WORDS!)")
 
         teases = ["Don't be shy.", 
@@ -108,5 +118,5 @@ class Round():
         
         with open(file, "r+") as scoreboard:
             data = scoreboard.read().splitlines()
-            scoreboard.write(f"\n{nickname}: {self.score}")
+            scoreboard.write(f"{nickname}: {self.score}\n")
         print(f"{nickname}, You're on the board!\n")

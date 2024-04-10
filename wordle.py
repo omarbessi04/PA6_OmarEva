@@ -10,6 +10,8 @@ def main():
 
     choice = "1"
     title = "Welcome to Wordle!"
+    wins = 0
+    losses = 0
     while choice in ["1", "2", "3", "4", "5"]:
         choice = show_main_menu(title)
 
@@ -20,16 +22,16 @@ def main():
                 game = play_wordle_round()
 
         elif choice == "2":
-            title = add_word_to_wordlist()
-
-        elif choice == "3":
-            title = remove_word_from_list()
-
-        elif choice == "4":
             see_high_scores()
         
-        elif choice == "5":
+        elif choice == "3":
             see_profiles()
+
+        elif choice == "4":
+            title = add_or_remove_word("add")
+
+        elif choice == "5":
+            title = add_or_remove_word("remove")
 
         else:
             choice = "Stop"
@@ -41,10 +43,10 @@ def show_main_menu(title) -> str:
     print(art.logo)
     print(title + "\n")
     print("1. Play Wordle")
-    print("2. Add word to wordlist")
-    print("3. Remove word from wordlist")
-    print("4. See high scores")
-    print("5. See profiles")
+    print("2. See high scores")
+    print("3. See profiles")
+    print("4. Add word to wordlist")
+    print("5. Remove word from wordlist")
     print("\nPress any other button to quit")
     choice = input("(1 / 2 / 3 / 4 / 5): ")
     return choice
@@ -57,6 +59,7 @@ def play_wordle_round() -> bool:
 
     new_round = Round(word, game_mode["Wordlength"], game_mode["Max Guesses"])
     os.system('cls' if os.name == 'nt' else 'clear')
+    
     new_round.play_round()
 
     print("Play Again? (Y / N)")
@@ -97,109 +100,9 @@ def get_starting_word(wordlength) -> str:
 
     with open (file_name, "r") as word_list:
         words = word_list.read().splitlines()
-        ret_word = ""
-        # All word files have a new line at the end of them
-        # so we don't want to pick the last word, so we use a -2 here
-        word_index = random.randint(0, len(words)-2)
-        ret_word = words[word_index]
+        ret_word = random.choice(words)
 
     return ret_word.lower()
-
-def add_word_to_wordlist():
-    """Add word to the specified wordlist"""
-
-
-    word_length, file_name = show_adding_removing_UI("add")
-
-    # We're going to append and read the file, so open it in r+ mode
-    with open (file_name, "r+") as word_list:
-        words = word_list.read().splitlines()
-
-        # Get new word and error check
-        new_word = ""
-        while new_word == "":
-            print("Enter new word:")
-            unsafe_new_word = input().strip().strip(string.punctuation)
-
-            if len(unsafe_new_word) != word_length:
-                print(f"Word must be {word_length} letters long")
-
-            elif any([letter.isnumeric() for letter in unsafe_new_word]):
-                print("Letter cannot include letters")
-
-            elif " " in unsafe_new_word:
-                print("Word cannot include spaces")
-
-            # The last thing we check on to hopefully save some time
-            elif unsafe_new_word in words:
-                print("Word already in wordlist")
-
-            else:
-                new_word = unsafe_new_word
-        
-        word_list.write(new_word.lower() + "\n")
-    
-    return f"{new_word} added to wordlist!"
-
-def remove_word_from_list():
-    """Remove word from the specified wordlist"""
-
-    word_length, file_name = show_adding_removing_UI("remove")
-
-    with open (file_name, "r") as word_list_file:
-        old_word_list = word_list_file.read().splitlines()
-
-    # Get new word and error check
-    word_amount = len(old_word_list)
-    while len(old_word_list) == word_amount:
-        print("Enter the word you want to remove:")
-        bad_word = input().lower()
-
-        # If the word is in the list, remove it
-        if bad_word in old_word_list:
-            old_word_list.remove(bad_word)
-            response = f"{bad_word} removed from wordlist"
-            
-        # The user might have expected the word to be there,
-        # so give them a chance to exit here
-        else:
-            print(f"{bad_word} not in wordlist. Try Again (Y / N)?")
-            repeat = input()
-            if repeat.lower() != "y":
-                response = "Word removal cancelled"
-                break
-
-    # Rewrite word file
-    with open (file_name, "w") as new_word_list:
-        for word in old_word_list:
-            new_word_list.write(word + "\n")
-
-    return response
-
-def show_adding_removing_UI(word):
-    """Shared text between the adding and removing functions"""
-
-    # Show UI
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print(art.settings)
-    print(f"First enter the length of the word that you want to {word}")
-    print("(Must be 4, 5, or 7)")
-    
-    # Get word length and error check
-    word_length = 0
-    while word_length not in ["4", "5", "7"]:
-        unsafe_word_length = input()
-
-        if unsafe_word_length not in ["4", "5", "7"]:
-            print("Word length must be 4, 5, or 7. Try Again")
-        else:
-            word_length = unsafe_word_length
-
-    # Set word length and get filename
-    word_length = int(unsafe_word_length)
-    file_name = f"Wordlists/{word_length}_letter_words.txt"
-
-    return word_length, file_name
 
 def see_high_scores():
     """Show high scores"""
@@ -245,7 +148,8 @@ def see_high_scores():
 
         # Check there is any data in the file
         if number_of_lines == 0:
-            print("No data available for this game mode")
+            print("No data available for this game mode\n")
+            input("Press Enter to quit")
 
         else:
             # base the number of spaces on the longest word in the file
@@ -262,7 +166,7 @@ def see_high_scores():
                 else:
                     print("|" + spaces + scoreboard[i] + spaces + " |")
 
-            input("\nPress enter to quit\n")
+            input("\nPress Enter to quit\n")
 
 def see_profiles():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -271,7 +175,103 @@ def see_profiles():
     pf = Profile_Manager()
     pf.get_profiles()
     pf.print_profiles()
+    print("\n*Note that only the highest score of each user is shown.")
+    print("For further details, see High Scores page")
     input("\nPress enter to quit\n")
+
+def add_or_remove_word(operation):
+    """Shared text between the adding and removing functions"""
+
+    # Show UI
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print(art.settings)
+    print(f"First enter the length of the word that you want to {operation}")
+    print("(Must be 4, 5, or 7)")
+    
+    # Get word length and error check
+    word_length = 0
+    while word_length not in ["4", "5", "7"]:
+        unsafe_word_length = input()
+
+        if unsafe_word_length not in ["4", "5", "7"]:
+            print("Word length must be '4', '5', or '7' (number). Try Again")
+        else:
+            word_length = unsafe_word_length
+
+    # Set word length and get filename
+    word_length = int(unsafe_word_length)
+    file_name = f"Wordlists/{word_length}_letter_words.txt"
+
+    if operation == "add":
+        return add_word_to_wordlist(word_length, file_name)
+    else:
+        return remove_word_from_list(file_name)
+
+def add_word_to_wordlist(word_length, file_name):
+    """Add word to the specified wordlist"""
+
+    # We're going to append and read the file, so open it in r+ mode
+    with open (file_name, "r+") as word_list:
+        words = word_list.read().splitlines()
+
+        # Get new word and error check
+        new_word = ""
+        while new_word == "":
+            print("Enter new word:")
+            unsafe_new_word = input().strip().strip(string.punctuation)
+
+            if len(unsafe_new_word) != word_length:
+                print(f"Word must be {word_length} letters long")
+
+            elif any([letter.isnumeric() for letter in unsafe_new_word]):
+                print("Letter cannot include letters")
+
+            elif " " in unsafe_new_word:
+                print("Word cannot include spaces")
+
+            # The last thing we check on to hopefully save some time
+            elif unsafe_new_word in words:
+                print("Word already in wordlist")
+
+            else:
+                new_word = unsafe_new_word
+        
+        word_list.write(new_word.lower() + "\n")
+    
+    return f"{new_word} added to wordlist!"
+
+def remove_word_from_list(file_name):
+    """Remove word from the specified wordlist"""
+
+    with open (file_name, "r") as word_list_file:
+        old_word_list = word_list_file.read().splitlines()
+
+    # Get new word and error check
+    word_amount = len(old_word_list)
+    while len(old_word_list) == word_amount:
+        print("Enter the word you want to remove:")
+        bad_word = input().lower()
+
+        # If the word is in the list, remove it
+        if bad_word in old_word_list:
+            old_word_list.remove(bad_word)
+            response = f"{bad_word} removed from wordlist"
+            
+        # The user might have expected the word to be there,
+        # so give them a chance to exit here
+        else:
+            print(f"{bad_word} not in wordlist. Try Again (Y / N)?")
+            repeat = input()
+            if repeat.lower() != "y":
+                response = "Word removal cancelled"
+                break
+
+    # Rewrite word file
+    with open (file_name, "w") as new_word_list:
+        for word in old_word_list:
+            new_word_list.write(word + "\n")
+
+    return response
 
 if __name__ == "__main__":
     main()

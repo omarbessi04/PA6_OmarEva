@@ -1,10 +1,2 @@
-omar1: 0
-tryggvi: 0
-omar3: 0
-kristjan: 2
-gardar: 1
-tryggvi: 4
-farts: 0
-omar1: 2
-feverman: 0
-OMAR: 4
+omar: 0
+eva: 0
