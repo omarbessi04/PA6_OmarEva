@@ -22,7 +22,7 @@ def main():
                 game = play_wordle_round()
 
         elif choice == "2":
-            see_high_scores()
+            see_scoreboards()
         
         elif choice == "3":
             see_profiles()
@@ -43,7 +43,7 @@ def show_main_menu(title) -> str:
     print(art.logo)
     print(title + "\n")
     print("1. Play Wordle")
-    print("2. See high scores")
+    print("2. See scoreboards")
     print("3. See profiles")
     print("4. Add word to wordlist")
     print("5. Remove word from wordlist")
@@ -104,12 +104,12 @@ def get_starting_word(wordlength) -> str:
 
     return ret_word.lower()
 
-def see_high_scores():
+def see_scoreboards():
     """Show high scores"""
 
     # UI
     os.system('cls' if os.name == 'nt' else 'clear')
-    print(art.high_scores)
+    print(art.scoreboard)
     print("Choose scoreboard")
     print("1. Normal Mode")
     print("2. Rule of 7")
@@ -143,7 +143,7 @@ def see_high_scores():
 
         # clear screen and show UI
         os.system('cls' if os.name == 'nt' else 'clear')
-        print(art.high_scores)
+        print(art.scoreboard)
         print(" -- " + title + " -- ")
 
         # Check there is any data in the file
