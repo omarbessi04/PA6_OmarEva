@@ -24,6 +24,7 @@ class Profile_Manager:
         
             for line in data:
                 line = line.split(":")
+                line[0] = line[0].strip()
                 line[1] = int(line[1])
 
                 find_profile = self.find_profile(line[0])
