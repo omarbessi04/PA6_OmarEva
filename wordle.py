@@ -2,6 +2,7 @@ import random
 import art
 import string
 import os
+from profile_manager import Profile_Manager
 from Round import Round
 
 def main():
@@ -28,7 +29,7 @@ def main():
             see_high_scores()
         
         elif choice == "5":
-            pass
+            see_profiles()
 
         else:
             choice = "Stop"
@@ -38,13 +39,13 @@ def show_main_menu(title) -> str:
 
     os.system('cls' if os.name == 'nt' else 'clear')
     print(art.logo)
-    print(title)
+    print(title + "\n")
     print("1. Play Wordle")
     print("2. Add word to wordlist")
     print("3. Remove word from wordlist")
     print("4. See high scores")
     print("5. See profiles")
-    print("Press any other button to quit")
+    print("\nPress any other button to quit")
     choice = input("(1 / 2 / 3 / 4 / 5): ")
     return choice
 
@@ -232,6 +233,9 @@ def see_high_scores():
 
         with open(file_name) as word_data:
             scoreboard = word_data.read().splitlines()
+
+        scoreboard = sorted(scoreboard, key=lambda user: int(user.split(":")[1]), reverse=True)
+
         number_of_lines = len(scoreboard)
 
         # clear screen and show UI
@@ -259,6 +263,15 @@ def see_high_scores():
                     print("|" + spaces + scoreboard[i] + spaces + " |")
 
             input("\nPress enter to quit\n")
+
+def see_profiles():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print(art.profiles)
+
+    pf = Profile_Manager()
+    pf.get_profiles()
+    pf.print_profiles()
+    input("\nPress enter to quit\n")
 
 if __name__ == "__main__":
     main()

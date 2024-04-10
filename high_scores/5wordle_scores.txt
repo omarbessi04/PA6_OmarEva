@@ -5,3 +5,6 @@ kristjan: 2
 gardar: 1
 tryggvi: 4
 farts: 0
+omar1: 2
+feverman: 0
+OMAR: 4
