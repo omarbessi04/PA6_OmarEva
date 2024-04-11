@@ -9,6 +9,7 @@ def main():
     choice = "1"
     title = "Welcome to Wordle!"
 
+    # Valid choices
     while choice in ["1", "2", "3", "4", "5"]:
         choice = show_main_menu(title)
 
@@ -43,17 +44,18 @@ def play_wordle_round() -> bool:
     """Plays a repeatable round of Wordle"""
 
     game_mode = choose_game_mode()
-    word = get_starting_word(game_mode["Wordlength"])
+    if game_mode:
+        word = get_starting_word(game_mode["Wordlength"])
 
-    new_round = Round(word, game_mode["Wordlength"], game_mode["Max Guesses"])
-    os.system('cls' if os.name == 'nt' else 'clear')
-    
-    new_round.play_round()
+        new_round = Round(word, game_mode["Wordlength"], game_mode["Max Guesses"])
+        UIManager().clear_screen()
+        
+        new_round.play_round()
 
-    print("Play Again? (Y / N)")
-    repeat = input()
-    if repeat.lower() == "y":
-        return True
+        print("Play Again? (Y / N)")
+        repeat = input()
+        if repeat.lower() == "y":
+            return True
 
 def choose_game_mode():
     """Choose a game mode"""
@@ -63,16 +65,20 @@ def choose_game_mode():
     mode = ui.game_mode()
 
     # Change setting according to user choice
-    if mode == "2":
+    settings = ""
+    if mode == "1":
+        settings ={"Wordlength": 5, "Max Guesses": 5}
+
+    elif mode == "2":
         settings ={"Wordlength": 4, "Max Guesses": 6}
 
     elif mode == "3":
         settings ={"Wordlength": 7, "Max Guesses": 7}
 
-    else:
-        settings ={"Wordlength": 5, "Max Guesses": 5}
-
-    return settings
+    if settings:
+        return settings
+    
+    return None
 
 def get_starting_word(wordlength) -> str:
     """ Gets a random word from the word list """
@@ -100,12 +106,12 @@ def see_scoreboards():
         title = "NORMAL MODE"
 
     elif choice == "2":
-        file_name = "high_scores/rule_of_7_scores.txt"
-        title = "RULE OF 7"
-
-    elif choice == "3":
         file_name = "high_scores/squadrant_scores.txt"
         title = "SQUADRANT MODE"
+
+    elif choice == "3":
+        file_name = "high_scores/rule_of_7_scores.txt"
+        title = "RULE OF 7"
 
     # Show highscores if user input is valid
     if file_name and title:
@@ -113,16 +119,18 @@ def see_scoreboards():
         with open(file_name) as word_data:
             scoreboard = word_data.read().splitlines()
 
+        # Sort scoreboard by points
         scoreboard = sorted(scoreboard, key=lambda user: int(user.split(":")[1]), reverse=True)
         number_of_lines = len(scoreboard)
         ui.see_specified_scoreboard(scoreboard, title, number_of_lines)
 
 def see_profiles():
+    """See profiles"""
     ui = UIManager()
     ui.see_profiles()
 
 def add_or_remove_word(operation):
-    """Shared text between the adding and removing functions"""
+    """Takes in an operation and either calls to remove or add a word"""
 
     # Show UI
     ui = UIManager()
@@ -165,7 +173,7 @@ def add_word_to_wordlist(word_length, file_name):
                 print(f"Word must be {word_length} letters long\n")
 
             elif any([letter.isnumeric() for letter in unsafe_new_word]):
-                print("Letter cannot include letters\n")
+                print("Letter cannot include numbers\n")
 
             elif " " in unsafe_new_word:
                 print("Word cannot include spaces\n")
@@ -208,9 +216,10 @@ def remove_word_from_list(file_name):
                 break
 
     # Rewrite word file
-    with open (file_name, "w") as new_word_list:
-        for word in old_word_list:
-            new_word_list.write(word + "\n")
+    if response != "Word removal cancelled":
+        with open (file_name, "w") as new_word_list:
+            for word in old_word_list:
+                new_word_list.write(word + "\n")
 
     return response
 
