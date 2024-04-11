@@ -1,2 +1,1 @@
-daGoat: 5
-Eva: 6
+omar og eva: 0

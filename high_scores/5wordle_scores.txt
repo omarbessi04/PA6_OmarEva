@@ -1,6 +1,3 @@
-ba: 0
 eva: 0
-eva : 0
-eva : 0
-Eva: 2
-Eva: 0
+Omar: 0
+Omar: 1

@@ -129,7 +129,7 @@ class Round:
         elif self.wordlength == 7:
             file += "rule_of_7_scores.txt"
 
-        with open(file, "r+") as scoreboard:
+        with open(file, "a") as scoreboard:
             scoreboard.write(f"{nickname}: {self.score}\n")
 
         print(f"{nickname}, You're on the board!\n")

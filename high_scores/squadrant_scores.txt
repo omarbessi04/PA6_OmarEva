@@ -1,4 +1,1 @@
 omar: 0
-eva: 1
-fartmeister: 0
-Eva: 3
