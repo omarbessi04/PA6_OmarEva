@@ -2,7 +2,8 @@ import os
 import art
 from profile_manager import Profile_Manager
 
-class UIManager():
+
+class UIManager:
     def __init__(self) -> None:
         """Empty init for the UIManager"""
 
@@ -22,7 +23,7 @@ class UIManager():
         print("\nPress any other button to quit")
         choice = input("(1 / 2 / 3 / 4 / 5): ")
         return choice
-    
+
     def game_mode(self):
         """UI for Game Mode selection"""
 
@@ -34,7 +35,7 @@ class UIManager():
         print("3. Rule of 7\n\t7 letter word, 7 guesses\n")
         mode = input("(1 / 2 / 3):\n")
         return mode
-    
+
     def see_scoreboards(self):
         """UI to choose a scoreboard"""
 
@@ -47,8 +48,8 @@ class UIManager():
         print("(1 / 2 / 3):")
         choice = input()
         return choice
-    
-    def see_specified_scoreboard(self,scoreboard, title, number_of_lines):
+
+    def see_specified_scoreboard(self, scoreboard, title, number_of_lines):
         """UI for Specified scoreboard"""
 
         # clear screen and show UI
@@ -100,7 +101,7 @@ class UIManager():
         print("(Must be 4, 5, or 7)")
 
     def play_round(self):
-        os.system('cls' if os.name == 'nt' else 'clear')
+        os.system("cls" if os.name == "nt" else "clear")
         print(art.logo)
         print("Previous Guesses")
         print("-----------------")
@@ -108,7 +109,7 @@ class UIManager():
     def lose_game(self, answer):
         print(art.lost)
         print(f"You lost. The Answer was: {answer}")
-    
+
     def win_game(self, answer):
         print(art.celebration)
         print(f"The answer is {answer}")
@@ -126,5 +127,5 @@ class UIManager():
 
     def clear_screen(self):
         """Clears the screen"""
-        
-        os.system('cls' if os.name == 'nt' else 'clear')
+
+        os.system("cls" if os.name == "nt" else "clear")

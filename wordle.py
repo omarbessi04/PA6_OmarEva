@@ -3,6 +3,7 @@ import string
 from Round import Round
 from UI_manager import UIManager
 
+
 def main():
     """Starts Main Menu"""
 
@@ -21,7 +22,7 @@ def main():
 
         elif choice == "2":
             see_scoreboards()
-        
+
         elif choice == "3":
             see_profiles()
 
@@ -34,11 +35,13 @@ def main():
         else:
             choice = "Stop"
 
+
 def show_main_menu(title) -> str:
     """Shows the main menu with a title"""
 
     ui = UIManager()
     return ui.show_main_menu(title)
+
 
 def play_wordle_round() -> bool:
     """Plays a repeatable round of Wordle"""
@@ -49,13 +52,14 @@ def play_wordle_round() -> bool:
 
         new_round = Round(word, game_mode["Wordlength"], game_mode["Max Guesses"])
         UIManager().clear_screen()
-        
+
         new_round.play_round()
 
         print("Play Again? (Y / N)")
         repeat = input()
         if repeat.lower() == "y":
             return True
+
 
 def choose_game_mode():
     """Choose a game mode"""
@@ -67,30 +71,32 @@ def choose_game_mode():
     # Change setting according to user choice
     settings = ""
     if mode == "1":
-        settings ={"Wordlength": 5, "Max Guesses": 5}
+        settings = {"Wordlength": 5, "Max Guesses": 5}
 
     elif mode == "2":
-        settings ={"Wordlength": 4, "Max Guesses": 6}
+        settings = {"Wordlength": 4, "Max Guesses": 6}
 
     elif mode == "3":
-        settings ={"Wordlength": 7, "Max Guesses": 7}
+        settings = {"Wordlength": 7, "Max Guesses": 7}
 
     if settings:
         return settings
-    
+
     return None
 
+
 def get_starting_word(wordlength) -> str:
-    """ Gets a random word from the word list """
+    """Gets a random word from the word list"""
 
     # file names differ only by a single number, the wordlength
     file_name = f"Wordlists/{wordlength}_letter_words.txt"
 
-    with open (file_name, "r") as word_list:
+    with open(file_name, "r") as word_list:
         words = word_list.read().splitlines()
         ret_word = random.choice(words)
 
     return ret_word.lower()
+
 
 def see_scoreboards():
     """Show high scores"""
@@ -120,14 +126,18 @@ def see_scoreboards():
             scoreboard = word_data.read().splitlines()
 
         # Sort scoreboard by points
-        scoreboard = sorted(scoreboard, key=lambda user: int(user.split(":")[1]), reverse=True)
+        scoreboard = sorted(
+            scoreboard, key=lambda user: int(user.split(":")[1]), reverse=True
+        )
         number_of_lines = len(scoreboard)
         ui.see_specified_scoreboard(scoreboard, title, number_of_lines)
+
 
 def see_profiles():
     """See profiles"""
     ui = UIManager()
     ui.see_profiles()
+
 
 def add_or_remove_word(operation):
     """Takes in an operation and either calls to remove or add a word"""
@@ -135,7 +145,7 @@ def add_or_remove_word(operation):
     # Show UI
     ui = UIManager()
     ui.add_remove_word(operation)
-    
+
     # Get word length and error check
     word_length = 0
     while word_length not in ["4", "5", "7"]:
@@ -155,11 +165,12 @@ def add_or_remove_word(operation):
     else:
         return remove_word_from_list(file_name)
 
+
 def add_word_to_wordlist(word_length, file_name):
     """Add word to the specified wordlist"""
 
     # We're going to append and read the file, so open it in r+ mode
-    with open (file_name, "r+") as word_list:
+    with open(file_name, "r+") as word_list:
         words = word_list.read().splitlines()
 
         # Get new word and error check
@@ -184,15 +195,16 @@ def add_word_to_wordlist(word_length, file_name):
 
             else:
                 new_word = unsafe_new_word
-        
+
         word_list.write(new_word.lower() + "\n")
-    
+
     return f"{new_word} added to wordlist!"
+
 
 def remove_word_from_list(file_name):
     """Remove word from the specified wordlist"""
 
-    with open (file_name, "r") as word_list_file:
+    with open(file_name, "r") as word_list_file:
         old_word_list = word_list_file.read().splitlines()
 
     # Get new word and error check
@@ -205,7 +217,7 @@ def remove_word_from_list(file_name):
         if bad_word in old_word_list:
             old_word_list.remove(bad_word)
             response = f"{bad_word} removed from wordlist"
-            
+
         # The user might have expected the word to be there,
         # so give them a chance to exit here
         else:
@@ -217,11 +229,12 @@ def remove_word_from_list(file_name):
 
     # Rewrite word file
     if response != "Word removal cancelled":
-        with open (file_name, "w") as new_word_list:
+        with open(file_name, "w") as new_word_list:
             for word in old_word_list:
                 new_word_list.write(word + "\n")
 
     return response
+
 
 if __name__ == "__main__":
     main()
