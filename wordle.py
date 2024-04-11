@@ -1,17 +1,14 @@
 import random
-import art
 import string
-import os
-from profile_manager import Profile_Manager
 from Round import Round
+from UI_manager import UIManager
 
 def main():
     """Starts Main Menu"""
 
     choice = "1"
     title = "Welcome to Wordle!"
-    wins = 0
-    losses = 0
+
     while choice in ["1", "2", "3", "4", "5"]:
         choice = show_main_menu(title)
 
@@ -39,17 +36,8 @@ def main():
 def show_main_menu(title) -> str:
     """Shows the main menu with a title"""
 
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print(art.logo)
-    print(title + "\n")
-    print("1. Play Wordle")
-    print("2. See scoreboards")
-    print("3. See profiles")
-    print("4. Add word to wordlist")
-    print("5. Remove word from wordlist")
-    print("\nPress any other button to quit")
-    choice = input("(1 / 2 / 3 / 4 / 5): ")
-    return choice
+    ui = UIManager()
+    return ui.show_main_menu(title)
 
 def play_wordle_round() -> bool:
     """Plays a repeatable round of Wordle"""
@@ -71,14 +59,8 @@ def choose_game_mode():
     """Choose a game mode"""
 
     # UI
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print(art.game_mode)
-    print("Pick Game Mode:")
-    print("1. Normal\n\t5 letter word, 5 guesses\n")
-    print("2. Squadrant\n\t4 letter word, 6 guesses\n")
-    print("3. Rule of 7\n\t7 letter word, 7 guesses\n")
-    print("\nIgnore to play Normal mode")
-    mode = input("(1 / 2 / 3):\n")
+    ui = UIManager()
+    mode = ui.game_mode()
 
     # Change setting according to user choice
     if mode == "2":
@@ -108,14 +90,8 @@ def see_scoreboards():
     """Show high scores"""
 
     # UI
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print(art.scoreboard)
-    print("Choose scoreboard")
-    print("1. Normal Mode")
-    print("2. Rule of 7")
-    print("3. Squadrant")
-    print("(1 / 2 / 3):")
-    choice = input()
+    ui = UIManager()
+    choice = ui.see_scoreboards()
 
     # Open the correct folder based on user input
     file_name, title = None, None
@@ -138,55 +114,19 @@ def see_scoreboards():
             scoreboard = word_data.read().splitlines()
 
         scoreboard = sorted(scoreboard, key=lambda user: int(user.split(":")[1]), reverse=True)
-
         number_of_lines = len(scoreboard)
-
-        # clear screen and show UI
-        os.system('cls' if os.name == 'nt' else 'clear')
-        print(art.scoreboard)
-        print(" -- " + title + " -- ")
-
-        # Check there is any data in the file
-        if number_of_lines == 0:
-            print("No data available for this game mode\n")
-            input("Press Enter to quit")
-
-        else:
-            # base the number of spaces on the longest word in the file
-            longest_word_length = max([len(word) for word in scoreboard])
-
-            for i in range(number_of_lines):
-                # find correct number of spaces
-                number_of_spaces = (2 * longest_word_length - len(scoreboard[i])) // 2
-                spaces = " " * number_of_spaces
-
-                # Words of odd length need one more space
-                if len(scoreboard[i]) % 2 == 0:
-                    print("|" + spaces + scoreboard[i] + spaces + "|")
-                else:
-                    print("|" + spaces + scoreboard[i] + spaces + " |")
-
-            input("\nPress Enter to quit\n")
+        ui.see_specified_scoreboard(scoreboard, title, number_of_lines)
 
 def see_profiles():
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print(art.profiles)
-
-    pf = Profile_Manager()
-    pf.get_profiles()
-    pf.print_profiles()
-    print("\n*Note that only the highest score of each user is shown.")
-    print("For further details, see High Scores page")
-    input("\nPress enter to quit\n")
+    ui = UIManager()
+    ui.see_profiles()
 
 def add_or_remove_word(operation):
     """Shared text between the adding and removing functions"""
 
     # Show UI
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print(art.settings)
-    print(f"First enter the length of the word that you want to {operation}")
-    print("(Must be 4, 5, or 7)")
+    ui = UIManager()
+    ui.add_remove_word(operation)
     
     # Get word length and error check
     word_length = 0
